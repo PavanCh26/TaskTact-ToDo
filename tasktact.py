@@ -37,7 +37,7 @@ def add_task(tasks):
     print(f"Task '{task_name}' added successfully!")
 
 def view_tasks(tasks):
-    """View all tasks with status."""
+    """View all tasks with their status."""
     if not tasks:
         print("No tasks yet.")
         return
@@ -47,10 +47,11 @@ def view_tasks(tasks):
         print(f"{i}. {t['task']} (Due: {t['due']}) - {status}")
 
 def update_task(tasks):
-    """Update an existing task."""
-    view_tasks(tasks)
+    """Edit or update a task's name or due date."""
     if not tasks:
+        print("No tasks available to update.")
         return
+    view_tasks(tasks)
     try:
         num = int(input("Enter task number to update: ")) - 1
         if 0 <= num < len(tasks):
@@ -61,7 +62,7 @@ def update_task(tasks):
             if new_due:
                 tasks[num]["due"] = new_due
             save_tasks(tasks)
-            print(f"Task '{tasks[num]['task']}' updated successfully!")
+            print("Task updated successfully.")
         else:
             print("Invalid task number.")
     except ValueError:
@@ -69,11 +70,12 @@ def update_task(tasks):
 
 def mark_done(tasks):
     """Mark or unmark a task as done."""
-    view_tasks(tasks)
     if not tasks:
+        print("No tasks available.")
         return
+    view_tasks(tasks)
     try:
-        num = int(input("Enter task number to toggle done: ")) - 1
+        num = int(input("Enter task number to mark/unmark as done: ")) - 1
         if 0 <= num < len(tasks):
             tasks[num]["done"] = not tasks[num]["done"]
             save_tasks(tasks)
@@ -86,9 +88,10 @@ def mark_done(tasks):
 
 def delete_task(tasks):
     """Delete a specific task."""
-    view_tasks(tasks)
     if not tasks:
+        print("No tasks available.")
         return
+    view_tasks(tasks)
     try:
         num = int(input("Enter task number to delete: ")) - 1
         if 0 <= num < len(tasks):
@@ -103,6 +106,36 @@ def delete_task(tasks):
 # ---------- Main Menu ----------
 def main():
     tasks = load_tasks()
+    while True:
+        print("\n--- TaskTact – Intelligent To-Do Manager ---")
+        print("1. Add Task")
+        print("2. View Tasks")
+        print("3. Update Task")
+        print("4. Mark/Unmark Done")
+        print("5. Delete Task")
+        print("6. Exit")
+
+        choice = input("Enter your choice: ").strip()
+
+        if choice == "1":
+            add_task(tasks)
+        elif choice == "2":
+            view_tasks(tasks)
+        elif choice == "3":
+            update_task(tasks)
+        elif choice == "4":
+            mark_done(tasks)
+        elif choice == "5":
+            delete_task(tasks)
+        elif choice == "6":
+            print("Goodbye! Stay productive.")
+            break
+        else:
+            print("Invalid choice, please try again.")
+
+# ---------- Run ----------
+if __name__ == "__main__":
+    main()
     while True:
         print("\n--- TaskTact – Intelligent To-Do Manager ---")
         print("1. Add Task")
