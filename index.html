@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TaskTact – Intelligent To-Do Manager</title>
   <style>
     :root {
@@ -17,105 +17,27 @@
       background: var(--bg);
       color: #111;
     }
-    .wrap {
-      max-width: 900px;
-      margin: 28px auto;
-      padding: 18px;
+    .wrap { max-width: 900px; margin: 28px auto; padding: 18px; }
+    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    h1 { font-size: 22px; margin: 0; }
+    .card { background: var(--card); border-radius: 10px; padding: 14px; box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06); }
+    .form-row { display: flex; gap: 8px; margin-bottom: 10px; }
+    input[type="text"], input[type="date"] {
+      flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #e6e9ef; font-size: 14px;
     }
-    .header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 14px;
-    }
-    h1 {
-      font-size: 22px;
-      margin: 0;
-    }
-    .card {
-      background: var(--card);
-      border-radius: 10px;
-      padding: 14px;
-      box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
-    }
-    .form-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-    input[type="text"],
-    input[type="date"] {
-      flex: 1;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #e6e9ef;
-      font-size: 14px;
-    }
-    button {
-      background: var(--accent);
-      color: #fff;
-      padding: 10px 12px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    button.ghost {
-      background: transparent;
-      color: var(--accent);
-      border: 1px solid rgba(37, 99, 235, 0.2);
-    }
-    .list {
-      margin-top: 12px;
-    }
-    .task-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #f0f2f5;
-      margin-bottom: 8px;
-    }
-    .task-left {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-    .task-title {
-      font-weight: 600;
-    }
-    .meta {
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .actions {
-      display: flex;
-      gap: 8px;
-    }
-    .small {
-      font-size: 13px;
-      padding: 8px 10px;
-      border-radius: 8px;
-    }
-    .done .task-title {
-      text-decoration: line-through;
-      color: var(--muted);
-    }
-    .empty {
-      padding: 20px;
-      text-align: center;
-      color: var(--muted);
-    }
-    footer {
-      margin-top: 18px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 13px;
-    }
-    @media (max-width:520px){
-      .form-row{flex-direction:column;}
-      .actions{flex-direction:column;}
-    }
+    button { background: var(--accent); color: #fff; padding: 10px 12px; border: none; border-radius: 8px; cursor: pointer; }
+    button.ghost { background: transparent; color: var(--accent); border: 1px solid rgba(37, 99, 235, 0.2); }
+    .list { margin-top: 12px; }
+    .task-row { display: flex; align-items: center; justify-content: space-between; padding: 10px; border-radius: 8px; border: 1px solid #f0f2f5; margin-bottom: 8px; }
+    .task-left { display: flex; gap: 12px; align-items: center; }
+    .task-title { font-weight: 600; }
+    .meta { font-size: 12px; color: var(--muted); }
+    .actions { display: flex; gap: 8px; }
+    .small { font-size: 13px; padding: 8px 10px; border-radius: 8px; }
+    .done .task-title { text-decoration: line-through; color: var(--muted); }
+    .empty { padding: 20px; text-align: center; color: var(--muted); }
+    footer { margin-top: 18px; text-align: center; color: var(--muted); font-size: 13px; }
+    @media (max-width:520px){ .form-row{flex-direction:column;} .actions{flex-direction:column;} }
   </style>
 </head>
 <body>
@@ -197,7 +119,6 @@
         const actions = document.createElement("div");
         actions.className = "actions";
 
-        // ✅ FIXED: Edit button now always appears
         const editBtn = document.createElement("button");
         editBtn.textContent = "Edit";
         editBtn.className = "small ghost";
@@ -214,7 +135,6 @@
 
         row.appendChild(left);
         row.appendChild(actions);
-
         list.appendChild(row);
       });
     }
@@ -293,132 +213,3 @@
   </script>
 </body>
 </html>
-        check.checked = !!t.done;
-        check.addEventListener('change', () => {
-          toggleDone(i);
-        });
-
-        const titleBox = document.createElement('div');
-        const title = document.createElement('div');
-        title.className = 'task-title';
-        title.textContent = t.task;
-        const meta = document.createElement('div');
-        meta.className = 'meta';
-        meta.textContent = 'Due: ' + (t.due && t.due !== 'No due date' ? t.due : 'No due date') + ' · Created: ' + (t.created || '');
-
-        titleBox.appendChild(title);
-        titleBox.appendChild(meta);
-
-        left.appendChild(check);
-        left.appendChild(titleBox);
-
-        const actions = document.createElement('div');
-        actions.className = 'actions';
-
-        const del = document.createElement('button');
-        del.className = 'small';
-        del.style.background = '#ef4444';
-        del.style.border = 'none';
-        del.style.color = '#fff';
-        del.textContent = 'Delete';
-        del.addEventListener('click', () => {
-          deleteTask(i);
-        });
-
-        const edit = document.createElement('button');
-        edit.className = 'small ghost';
-        edit.textContent = t.done ? 'Undo' : 'Mark Done';
-        edit.addEventListener('click', () => {
-          toggleDone(i);
-        });
-
-        actions.appendChild(edit);
-        actions.appendChild(del);
-
-        row.appendChild(left);
-        row.appendChild(actions);
-
-        taskList.appendChild(row);
-      });
-    }
-
-    function addTask(){
-      const name = taskInput.value.trim();
-      if(!name){
-        alert('Please enter a task name.');
-        return;
-      }
-      const due = dueInput.value ? dueInput.value : 'No due date';
-      const tasks = loadTasks();
-      tasks.push({
-        task: name,
-        due: due,
-        done: false,
-        created: new Date().toISOString().slice(0,10)
-      });
-      saveTasks(tasks);
-      taskInput.value = '';
-      dueInput.value = '';
-      render();
-    }
-
-    function toggleDone(index){
-      const tasks = loadTasks();
-      if(!tasks[index]) return;
-      tasks[index].done = !tasks[index].done;
-      saveTasks(tasks);
-      render();
-    }
-
-    function deleteTask(index){
-      if(!confirm('Delete this task?')) return;
-      const tasks = loadTasks();
-      tasks.splice(index,1);
-      saveTasks(tasks);
-      render();
-    }
-
-    // Export tasks as JSON file
-    function exportTasks(){
-      const tasks = loadTasks();
-      const blob = new Blob([JSON.stringify(tasks, null, 2)], {type: 'application/json'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'tasks.json';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    }
-
-    // Import tasks from JSON file (replace current)
-    importFile.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if(!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        try {
-          const data = JSON.parse(ev.target.result);
-          if(!Array.isArray(data)) throw new Error('Invalid file format');
-          saveTasks(data);
-          render();
-          alert('Tasks imported successfully.');
-        } catch (err) {
-          alert('Failed to import JSON: ' + err.message);
-        }
-      };
-      reader.readAsText(file);
-      e.target.value = ''; // reset
-    });
-
-    addBtn.addEventListener('click', addTask);
-    taskInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') addTask(); });
-    exportBtn.addEventListener('click', exportTasks);
-
-    // Initial render
-    render();
-  </script>
-</body>
-        </html>
-  
