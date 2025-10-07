@@ -1,108 +1,306 @@
-<script>
-  const STORAGE_KEY = "tasktact_tasks";
-  let editIndex = null;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskTact</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    header {
+      width: 100%;
+      background: #2563eb;
+      color: white;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .container {
+      width: 90%;
+      max-width: 500px;
+      background: white;
+      margin-top: 1.5rem;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+    input, button {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    button {
+      cursor: pointer;
+      background: #2563eb;
+      color: white;
+      border: none;
+    }
+    button.ghost {
+      background: transparent;
+      border: 1px solid #2563eb;
+      color: #2563eb;
+    }
+    button.small {
+      padding: 0.3rem 0.6rem;
+      font-size: 0.8rem;
+    }
+    .task-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem;
+      border-bottom: 1px solid #eee;
+    }
+    .task-row.done .task-title {
+      text-decoration: line-through;
+      color: #888;
+    }
+    .task-left {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .task-title {
+      font-weight: 500;
+    }
+    .meta {
+      font-size: 0.8rem;
+      color: #666;
+    }
+    #empty {
+      text-align: center;
+      color: #999;
+      padding: 1rem 0;
+    }
+    .actions {
+      display: flex;
+      gap: 0.3rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>TaskTact ✅</h1>
+    <button id="exportBtn" class="ghost small">⬇️ Export JSON</button>
+  </header>
 
-  function loadTasks() {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
-  }
+  <div class="container">
+    <div style="display:flex;gap:0.5rem;">
+      <input type="text" id="taskInput" placeholder="Enter a task..." style="flex:1;">
+      <input type="date" id="dueInput">
+      <button id="addBtn">Add</button>
+      <button id="updateBtn" style="display:none;">Update</button>
+    </div>
 
-  function saveTasks(tasks) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-  }
+    <div id="empty">No tasks yet.</div>
+    <div id="taskList"></div>
+  </div>
 
-  function render() {
-    const tasks = loadTasks();
-    const list = document.getElementById("taskList");
-    const empty = document.getElementById("empty");
-    list.innerHTML = "";
+  <script>
+    const STORAGE_KEY = "tasktact_tasks";
+    let editIndex = null;
 
-    if (!tasks.length) {
-      empty.style.display = "block";
-      return;
+    function loadTasks() {
+      const data = localStorage.getItem(STORAGE_KEY);
+      return data ? JSON.parse(data) : [];
     }
 
-    empty.style.display = "none";
+    function saveTasks(tasks) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    }
 
-    tasks.forEach((t, i) => {
-      const row = document.createElement("div");
-      row.className = "task-row" + (t.done ? " done" : "");
+    function render() {
+      const tasks = loadTasks();
+      const list = document.getElementById("taskList");
+      const empty = document.getElementById("empty");
+      list.innerHTML = "";
 
-      const left = document.createElement("div");
-      left.className = "task-left";
+      if (!tasks.length) {
+        empty.style.display = "block";
+        return;
+      }
+      empty.style.display = "none";
 
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.checked = t.done;
-      checkbox.addEventListener("change", () => toggleDone(i));
+      tasks.forEach((t, i) => {
+        const row = document.createElement("div");
+        row.className = "task-row" + (t.done ? " done" : "");
 
-      const textBox = document.createElement("div");
-      const title = document.createElement("div");
-      title.className = "task-title";
-      title.textContent = t.task;
+        const left = document.createElement("div");
+        left.className = "task-left";
 
-      const meta = document.createElement("div");
-      meta.className = "meta";
-      meta.textContent =
-        "Due: " + (t.due || "No due date") + " | Created: " + t.created;
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = t.done;
+        checkbox.addEventListener("change", () => toggleDone(i));
 
-      textBox.appendChild(title);
-      textBox.appendChild(meta);
-      left.appendChild(checkbox);
-      left.appendChild(textBox);
+        const textBox = document.createElement("div");
+        const title = document.createElement("div");
+        title.className = "task-title";
+        title.textContent = t.task;
 
-      const actions = document.createElement("div");
-      actions.className = "actions";
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        meta.textContent = "Due: " + (t.due || "No due date") + " | Created: " + t.created;
 
-      const editBtn = document.createElement("button");
-      editBtn.textContent = "Edit";
-      editBtn.className = "small ghost";
-      editBtn.addEventListener("click", () => startEdit(i));
+        textBox.appendChild(title);
+        textBox.appendChild(meta);
+        left.appendChild(checkbox);
+        left.appendChild(textBox);
 
-      const delBtn = document.createElement("button");
-      delBtn.textContent = "Delete";
-      delBtn.className = "small";
-      delBtn.style.background = "#ef4444";
-      delBtn.addEventListener("click", () => deleteTask(i));
+        const actions = document.createElement("div");
+        actions.className = "actions";
 
-      actions.appendChild(editBtn);
-      actions.appendChild(delBtn);
+        const editBtn = document.createElement("button");
+        editBtn.textContent = "Edit";
+        editBtn.className = "small ghost";
+        editBtn.addEventListener("click", () => startEdit(i));
 
-      row.appendChild(left);
-      row.appendChild(actions);
-      list.appendChild(row);
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "Delete";
+        delBtn.className = "small";
+        delBtn.style.background = "#ef4444";
+        delBtn.addEventListener("click", () => deleteTask(i));
+
+        actions.appendChild(editBtn);
+        actions.appendChild(delBtn);
+
+        row.appendChild(left);
+        row.appendChild(actions);
+        list.appendChild(row);
+      });
+    }
+
+    function addTask() {
+      const name = document.getElementById("taskInput").value.trim();
+      const due = document.getElementById("dueInput").value;
+      if (!name) {
+        alert("Please enter a task name.");
+        return;
+      }
+
+      const today = new Date().toISOString().slice(0, 10);
+      if (due && due <= today) {
+        alert("⚠️ Due date must be after today!");
+        return;
+      }
+
+      const tasks = loadTasks();
+      tasks.push({
+        task: name,
+        due: due || "No due date",
+        done: false,
+        created: today,
+      });
+      saveTasks(tasks);
+
+      document.getElementById("taskInput").value = "";
+      document.getElementById("dueInput").value = "";
+      render();
+    }
+
+    function startEdit(index) {
+      const tasks = loadTasks();
+      const t = tasks[index];
+      document.getElementById("taskInput").value = t.task;
+      document.getElementById("dueInput").value = t.due !== "No due date" ? t.due : "";
+      document.getElementById("addBtn").style.display = "none";
+      document.getElementById("updateBtn").style.display = "inline-block";
+      editIndex = index;
+    }
+
+    function updateTask() {
+      const tasks = loadTasks();
+      if (editIndex === null) return;
+
+      const name = document.getElementById("taskInput").value.trim();
+      const due = document.getElementById("dueInput").value;
+      if (!name) {
+        alert("Task name cannot be empty.");
+        return;
+      }
+
+      const today = new Date().toISOString().slice(0, 10);
+      if (due && due <= today) {
+        alert("⚠️ Due date must be after today!");
+        return;
+      }
+
+      tasks[editIndex].task = name;
+      tasks[editIndex].due = due || "No due date";
+      saveTasks(tasks);
+
+      document.getElementById("taskInput").value = "";
+      document.getElementById("dueInput").value = "";
+      document.getElementById("addBtn").style.display = "inline-block";
+      document.getElementById("updateBtn").style.display = "none";
+      editIndex = null;
+      render();
+    }
+
+    function toggleDone(index) {
+      const tasks = loadTasks();
+      tasks[index].done = !tasks[index].done;
+      saveTasks(tasks);
+      render();
+    }
+
+    function deleteTask(index) {
+      const tasks = loadTasks();
+      tasks.splice(index, 1);
+      saveTasks(tasks);
+      render();
+    }
+
+    // ✅ Export JSON Feature
+    function exportTasks() {
+      const tasks = loadTasks();
+      if (!tasks.length) {
+        alert("No tasks to export!");
+        return;
+      }
+      const dataStr = JSON.stringify(tasks, null, 2);
+      const blob = new Blob([dataStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "TaskTact_Tasks.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById("addBtn").addEventListener("click", addTask);
+    document.getElementById("updateBtn").addEventListener("click", updateTask);
+    document.getElementById("exportBtn").addEventListener("click", exportTasks);
+    document.getElementById("taskInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") addTask();
     });
-  }
 
-  function addTask() {
-    const name = document.getElementById("taskInput").value.trim();
-    const due = document.getElementById("dueInput").value;
-    if (!name) {
-      alert("Please enter a task name.");
-      return;
-    }
+    // ✅ Prevent selecting today or past date
+    const dateInput = document.getElementById("dueInput");
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    dateInput.min = tomorrow.toISOString().slice(0, 10);
 
-    const today = new Date().toISOString().slice(0, 10);
-    if (due && due <= today) {
-      alert("⚠️  Due date must be after today!");
-      return;
-    }
-
-    const tasks = loadTasks();
-    tasks.push({
-      task: name,
-      due: due || "No due date",
-      done: false,
-      created: today,
-    });
-    saveTasks(tasks);
-
-    document.getElementById("taskInput").value = "";
-    document.getElementById("dueInput").value = "";
     render();
-  }
-
-  function startEdit(index) {
+  </script>
+</body>
+</html>
     const tasks = loadTasks();
     const t = tasks[index];
     document.getElementById("taskInput").value = t.task;
