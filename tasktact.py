@@ -19,22 +19,35 @@ def save_tasks(tasks):
 
 # ---------- Task Operations ----------
 def add_task(tasks):
-    """Add a new task with optional due date."""
+    """Add a new task with due date validation."""
     task_name = input("Enter task name: ").strip()
     if not task_name:
         print("Task cannot be empty!")
         return
 
     due_date = input("Enter due date (YYYY-MM-DD or leave blank): ").strip()
+    if due_date:
+        try:
+            due = datetime.datetime.strptime(due_date, "%Y-%m-%d").date()
+            today = datetime.date.today()
+            if due < today:
+                print("⚠️  Due date cannot be before today! Please enter a valid future date.")
+                return
+        except ValueError:
+            print("⚠️  Invalid date format. Please use YYYY-MM-DD.")
+            return
+    else:
+        due_date = "No due date"
+
     task = {
         "task": task_name,
-        "due": due_date if due_date else "No due date",
+        "due": due_date,
         "done": False,
         "created": str(datetime.date.today())
     }
     tasks.append(task)
     save_tasks(tasks)
-    print(f"Task '{task_name}' added successfully!")
+    print(f"✅ Task '{task_name}' added successfully!")
 
 def view_tasks(tasks):
     """View all tasks with their status."""
@@ -60,9 +73,17 @@ def update_task(tasks):
             if new_name:
                 tasks[num]["task"] = new_name
             if new_due:
-                tasks[num]["due"] = new_due
+                try:
+                    due = datetime.datetime.strptime(new_due, "%Y-%m-%d").date()
+                    today = datetime.date.today()
+                    if due < today:
+                        print("⚠️  Due date cannot be before today! Keeping old date.")
+                    else:
+                        tasks[num]["due"] = new_due
+                except ValueError:
+                    print("⚠️  Invalid date format. Keeping old date.")
             save_tasks(tasks)
-            print("Task updated successfully.")
+            print("📝 Task updated successfully.")
         else:
             print("Invalid task number.")
     except ValueError:
@@ -97,13 +118,45 @@ def delete_task(tasks):
         if 0 <= num < len(tasks):
             removed = tasks.pop(num)
             save_tasks(tasks)
-            print(f"Deleted '{removed['task']}' successfully.")
+            print(f"🗑️  Deleted '{removed['task']}' successfully.")
         else:
             print("Invalid task number.")
     except ValueError:
         print("Please enter a valid number.")
 
 # ---------- Main Menu ----------
+def main():
+    tasks = load_tasks()
+    while True:
+        print("\n--- TaskTact – Intelligent To-Do Manager ---")
+        print("1. Add Task")
+        print("2. View Tasks")
+        print("3. Update Task")
+        print("4. Mark/Unmark Done")
+        print("5. Delete Task")
+        print("6. Exit")
+
+        choice = input("Enter your choice: ").strip()
+
+        if choice == "1":
+            add_task(tasks)
+        elif choice == "2":
+            view_tasks(tasks)
+        elif choice == "3":
+            update_task(tasks)
+        elif choice == "4":
+            mark_done(tasks)
+        elif choice == "5":
+            delete_task(tasks)
+        elif choice == "6":
+            print("👋 Goodbye! Stay productive.")
+            break
+        else:
+            print("Invalid choice, please try again.")
+
+# ---------- Run ----------
+if __name__ == "__main__":
+    main()# ---------- Main Menu ----------
 def main():
     tasks = load_tasks()
     while True:
